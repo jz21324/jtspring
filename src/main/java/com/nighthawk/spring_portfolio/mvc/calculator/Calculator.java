@@ -29,6 +29,7 @@ public class Calculator {
         OPERATORS.put("%", 3);
         OPERATORS.put("+", 4);
         OPERATORS.put("-", 4);
+        OPERATORS.put("^", 1);
     }
 
     // Helper definition for supported operators
@@ -44,6 +45,8 @@ public class Calculator {
     public Calculator(String expression) {
         // original input
         this.expression = expression;
+        
+        this.parentheseCheck();
 
         // parse expression into terms
         this.termTokenizer();
@@ -53,6 +56,22 @@ public class Calculator {
 
         // calculate reverse polish notation
         this.rpnToResult();
+    }
+
+    private void parenthesesCheck() {
+        int leftParentheses = 0;
+        int rightParentheses = 0;
+        for (int i = 0; i < this.expression.length(); i++) {
+            if (this.expression.charAt(i) == '(') {
+                leftParentheses++;
+            } else if (this.expression.charAt(i) == ')') {
+                rightParentheses++;
+            }
+        }
+
+        if (leftParentheses != rightParentheses) {
+            throw new RuntimeException("Parentheses imbalance, check your parentheses.");
+        }
     }
 
     // Test if token is an operator
@@ -157,6 +176,25 @@ public class Calculator {
 
     }
 
+    public double calculate(String operator, double a, double b) {
+        switch (operator) {
+            case "+":
+                return a + b;
+            case "-":
+                return a - b;
+            case "*":
+                return a * b;
+            case "/":
+                return a / b;
+            case "%":
+                return a % b;
+            case "^":
+                return Math.pow(a, b);
+            default:
+                throw new RuntimeException("Unsupported operator: " + operator);
+        }
+    }
+
     // Takes RPN and produces a final result
     private void rpnToResult()
     {
@@ -170,9 +208,11 @@ public class Calculator {
             if (isOperator(token))
             {
                 // Pop the two top entries
-
+                double a = Double.valueOf(calcStack.pop());
+                double b = Double.valueOf(calcStack.pop());
                 // Calculate intermediate results
                 result = 0.0;
+                result = calculate(token, a, b);
 
                 // Push intermediate result back onto the stack
                 calcStack.push( result );
@@ -220,6 +260,14 @@ public class Calculator {
 
         Calculator divisionMath = new Calculator("300/200");
         System.out.println("Division Math\n" + divisionMath);
+
+        Calculator powerMath = new Calculator("2^3");
+        System.out.println("Power Math\n" + powerMath);
+
+        System.out.println();
+
+        System.out.println("Parentheses imbalance error:");
+        Calculator parenthesesError = new Calculator("((100+200)*3");
 
     }
 }
