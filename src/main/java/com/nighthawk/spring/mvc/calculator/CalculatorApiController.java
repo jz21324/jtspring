@@ -1,25 +1,38 @@
 package com.nighthawk.spring.mvc.calculator;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-// Calculator api, endpoint: /api/calculator/
-@RestController
-@RequestMapping("/api/calculator")
+@Controller
 public class CalculatorApiController {
-    @GetMapping("/calculate")
-    public ResponseEntity<String> calculate(@RequestBody final String expression) {
-        try {
-            Calculator calculatedExpression = new Calculator(expression);
-            return new ResponseEntity<>(calculatedExpression.toString(), HttpStatus.ACCEPTED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Internal Error/Parsing Error, check your expression", HttpStatus.BAD_REQUEST);
-        }
+
+    @GetMapping("/calculator")
+    public String getResult(
+            @RequestParam(name = "expression", required = false, defaultValue = "5 * 4") String expression,
+            Model model) {
+
+        // Returns jsonified result of expression with tokens and everything
+        Calculator newCalc = new Calculator(expression);
+        String result = newCalc.toString();
+        model.addAttribute("result", result);
+
+        return "calculator";
     }
+
+    @GetMapping("/api/calculator/{expression}")
+    public ResponseEntity<String> getResult(@PathVariable String expression) {
+
+        // Returns jsonified result of expression with tokens and everything
+        Calculator newCalc = new Calculator(expression);
+        String result = newCalc.toJSON();
+        return new ResponseEntity<String>(result, HttpStatus.OK);
+
+        // Bad ID
+    }
+
 }

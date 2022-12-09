@@ -15,10 +15,12 @@
 // import javax.validation.constraints.Email;
 // import javax.validation.constraints.NotEmpty;
 // import javax.validation.constraints.Size;
-
+// import java.util.GregorianCalendar;
 // import org.hibernate.annotations.Type;
 // import org.hibernate.annotations.TypeDef;
 // import org.springframework.format.annotation.DateTimeFormat;
+
+// import com.vladmihalcea.hibernate.type.json.JsonType;
 
 // import lombok.AllArgsConstructor;
 // import lombok.Data;
@@ -36,9 +38,9 @@
 // @AllArgsConstructor
 // @NoArgsConstructor
 // @Entity
-// @TypeDef(name="json", typeClass = JsonType.class)
+// @TypeDef(name = "json", typeClass = JsonType.class)
 // public class Person {
-    
+
 //     // automatic unique identifier for Person record
 //     @Id
 //     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,50 +48,74 @@
 
 //     // email, password, roles are key attributes to login and authentication
 //     @NotEmpty
-//     @Size(min=5)
-//     @Column(unique=true)
+//     @Size(min = 5)
+//     @Column(unique = true)
 //     @Email
 //     private String email;
 
 //     @NotEmpty
 //     private String password;
 
-//     // @NonNull, etc placed in params of constructor: "@NonNull @Size(min = 2, max = 30, message = "Name (2 to 30 chars)") String name"
+//     @NotEmpty
+//     private String passwordHash;
+
+//     private double height;
+
+//     private double weight;
+
+//     private char gender;
+
+//     // @NonNull, etc placed in params of constructor: "@NonNull @Size(min = 2, max =
+//     // 30, message = "Name (2 to 30 chars)") String name"
 //     @NonNull
 //     @Size(min = 2, max = 30, message = "Name (2 to 30 chars)")
 //     private String name;
 
 //     @DateTimeFormat(pattern = "yyyy-MM-dd")
 //     private Date dob;
-    
 
-//     /* HashMap is used to store JSON for daily "stats"
-//     "stats": {
-//         "2022-11-13": {
-//             "calories": 2200,
-//             "steps": 8000
-//         }
-//     }
-//     */
-//     @Type(type="json")
+//     /*
+//      * HashMap is used to store JSON for daily "stats"
+//      * "stats": {
+//      * "2022-11-13": {
+//      * "calories": 2200,
+//      * "steps": 8000
+//      * }
+//      * }
+//      */
+//     @Type(type = "json")
 //     @Column(columnDefinition = "jsonb")
-//     private Map<String,Map<String, Object>> stats = new HashMap<>(); 
-    
-
-//     // Constructor used when building object from an API
-//     public Person(String email, String password, String name, Date dob) {
-//         this.email = email;
-//         this.password = password;
-//         this.name = name;
-//         this.dob = dob;
-//     }
+//     private Map<String, Map<String, Object>> stats = new HashMap<>();
 
 //     // A custom getter to return age from dob attribute
 //     public int getAge() {
 //         if (this.dob != null) {
 //             LocalDate birthDay = this.dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//             return Period.between(birthDay, LocalDate.now()).getYears(); }
+//             return Period.between(birthDay, LocalDate.now()).getYears();
+//         }
 //         return -1;
+//     }
+
+//     public String toString() {
+//         return ("{ \"email\": " + this.email + ", " + "\"password\": " + this.password + ", " + "\"name\": " + this.name
+//                 + ", " + "\"dob\": " + this.dob + ", " + "\"height\": " + this.height + ", " + "\"weight\": "
+//                 + this.weight + ", " + "\"gender\": " + this.gender + " }");
+//     }
+
+//     public String getAgeToString() {
+//         return ("{ \"name\": " + this.name + " ," + "\"age\": " + this.getAge() + " }");
+//     }
+
+//     public static void main(String[] args) {
+//         Person person = new Person();
+//         Date dob2 = new GregorianCalendar(2006, 4, 2).getTime();
+//         person.setDob(dob2);
+//         person.setName("John");
+//         person.setGender('M');
+//         person.setHeight(71.0);
+//         person.setWeight(180.0);
+//         System.out.println(person.toString());
+//         System.out.println(person.getAge());
 //     }
 
 // }
