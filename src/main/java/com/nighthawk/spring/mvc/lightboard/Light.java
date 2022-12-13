@@ -1,11 +1,12 @@
 package com.nighthawk.spring.mvc.lightboard;
 
+import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
 
-// import lombok.Data;
+import lombok.Data;
 
-// @Data  // Annotations to simplify writing code (ie constructors, setters)
+@Data  // Annotations to simplify writing code (ie constructors, setters)
 public class Light {
     boolean on;
     short red;
@@ -43,8 +44,12 @@ public class Light {
 
     /* Assign random colors and effects */
     public Light() {
+        Random prob = new Random();
+        this.on = prob.nextBoolean();
+
         int maxColor = 255;
         int effect = 9;
+
         this.red = (short) (Math.random()*(maxColor+1));
         this.green = (short) (Math.random()*(maxColor+1));
         this.blue = (short) (Math.random()*(maxColor+1));
@@ -71,6 +76,14 @@ public class Light {
             "\"blue\": " + blue + "," +
             "\"effect\": " + "\"" + EFFECT.get(effect) + "\"" +
             "}" );
+    }
+
+    public boolean isOn() {
+        return this.on;
+    }
+
+    public void turnOn(boolean on) {
+        this.on = on;
     }
 
     static public void main(String[] args) {

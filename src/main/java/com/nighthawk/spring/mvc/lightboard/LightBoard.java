@@ -58,6 +58,8 @@ public class LightBoard {
                 "\"" + "RGB\": " + "\"" + lights[row][col].getRGB() + "\"" +
                 "," +
                 "\"" + "Effect\": " + "\"" + lights[row][col].getEffectTitle() + "\"" +
+                "," +
+                "\"" + "Status\": " + "\"" + lights[row][col].isOn() +
                 "}," +
                 // newline
                 "\n" ;
@@ -72,7 +74,7 @@ public class LightBoard {
     public String toColorPalette() {
         // block sizes
         final int ROWS = 5;
-        final int COLS = 10;
+        final int COLS = 5;
 
         // Build large string for entire color palette
         String outString = "";
@@ -82,31 +84,33 @@ public class LightBoard {
             for (int i = 0; i < ROWS; i++) {
                 // find each column
                 for (int col = 0; col < lights[row].length; col++) {
-                    // repeat each column for block size
-                    for (int j = 0; j < COLS; j++) {
-                        // print single character, except at midpoint print color code
-                        String c = (i == (int) (ROWS / 2) && j == (int) (COLS / 2) ) 
-                            ? lights[row][col].getRGB()
-                            : (j == (int) (COLS / 2))  // nested ternary
-                            ? " ".repeat(lights[row][col].getRGB().length())
-                            : " ";
+                        // repeat each column for block size
+                        for (int j = 0; j < COLS; j++) {
+                            // print single character, except at midpoint print color code
+                            if (lights[row][col].isOn()) {
+                            String c = (i == (int) (ROWS / 2) && j == (int) (COLS / 2) ) 
+                                ? lights[row][col].getRGB()
+                                : (j == (int) (COLS / 2))  // nested ternary
+                                ? " ".repeat(lights[row][col].getRGB().length())
+                                : " ";
 
-                        outString += 
-                        // reset
-                        "\033[m" +
-                        
-                        // color
-                        "\033[38;2;" + 
-                        lights[row][col].getRed() + ";" +
-                        lights[row][col].getGreen() + ";" +
-                        lights[row][col].getBlue() + ";" +
-                        "7m" +
+                            outString += 
+                            // reset
+                            "\033[m" +
+                            
+                            // color
+                            "\033[38;2;" + 
+                            lights[row][col].getRed() + ";" +
+                            lights[row][col].getGreen() + ";" +
+                            lights[row][col].getBlue() + ";" +
+                            "7m" +
 
-                        // color code or blank character
-                        c +
+                            // color code or blank character
+                            c +
 
-                        // reset
-                        "\033[m";
+                            // reset
+                            "\033[m";
+                        }
                     }
                 }
                 outString += "\n";
@@ -116,12 +120,34 @@ public class LightBoard {
         outString += "\033[m";
 		return outString;
     }
+
+    public void toggleLight(int row, int col){
+        if(lights[row][col].isOn()){
+            lights[row][col].turnOn(false);
+        } else{
+            lights[row][col].turnOn(true);
+        }
+        System.out.println("Light " + row + ", " + col + " has been turned " + lights[row][col].isOn());
+    }
+
+    public void toggleAllOn() {
+        for (int i = 0; i < lights.length; i++) {
+            for (int j = 0; j < lights[i].length; j++) {
+                lights[i][j].turnOn(true);
+            }
+        }
+        System.out.println("All lights on!");
+    }
     
     static public void main(String[] args) {
         // create and display LightBoard
-        LightBoard lightBoard = new LightBoard(5, 5);
+        LightBoard lightBoard = new LightBoard(2, 8);
         System.out.println(lightBoard);  // use toString() method
         System.out.println(lightBoard.toTerminal());
+        System.out.println(lightBoard.toColorPalette());
+        lightBoard.toggleLight(1,1);
+        System.out.println(lightBoard.toColorPalette());
+        lightBoard.toggleAllOn();
         System.out.println(lightBoard.toColorPalette());
     }
 }
